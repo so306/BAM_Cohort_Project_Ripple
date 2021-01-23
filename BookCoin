@@ -3,20 +3,16 @@ pragma solidity >0.5.99 <0.8.0;
 
 contract BookChain{
     
-    mapping (uint => int[]) books;     //ISPN to list of people who own each book
+    mapping (uint => address) books;
     mapping (address => uint) reputation;
     mapping (address => uint) currency;
     
     event bookRegistered(address lender, uint ISPN);
     event onlineTransactionCompleted(address lender, address borrower, uint ISPN);
-    //event inPersonTransactionCompleted(address lender, address borrower, uint ISPN);
-    //event returnCompleted(address lender, address borrower, uint ISPN);
     
     
-    function registerBook(int lender, uint ISPN) public {
-        int[] storage arr = new int[](2);
-        arr = books[ISPN];
-        arr.push(lender);
+    function registerBook(address lender, uint ISPN) public {
+        books[ISPN] = lender;
         emit bookRegistered(lender, ISPN);
     }
     
@@ -27,78 +23,21 @@ contract BookChain{
     }
     
     
-    function modifyBalances(address lender, address borrower, int amount) private{
-        currency[borrower] -= amount;
+    function modifyBalances(address lender, address borrower, uint amount) private{
+        currency[borrower] += amount;
         currency[lender] += amount;
     }
     
-    
-    //how long lender has been active, would need to save timestamp of when they join
-    //did lender follow through; book quality out of 10
-    //, bool hasFollowedThrough, bool isOnTime, uint bookQuality)
     function modifyReputation(address lender) private{  
         reputation[lender] += 10;
-        /*if(hasFollowedThrough){
-            reputation[lender] += 10;
-            reputation[lender] += bookQuality;
-        }
-        if(isOnTime){
-            reputation[lender] += 10;
-        }*/
     }
     
-    
-    function selectLender(uint ISPN) private returns(int){    //choose lender with highest rep
-        uint[] storage arr = books[ISPN];
-        address highestLender = arr[0];
-        for(int i = 0; i < arr.length; i++){
-            if(highestLender < arr[i]){
-                highestLender = arr[i];
-            }
-        }
-        return highestLender;
-    }
-    
-    
-    function removeLender(address lender, uint ISPN) private{ //remove lender from list for specific ISPN
-        uint[] storage arr = books[ISPN];   //storage, memory, or calldata
-        int lenderIdx = 0;
-        for(lenderIdx; lenderIdx < arr.length; lenderIdx++){
-            if(lender == arr[lenderIdx])
-            break;
-        }
-        arr[lenderIdx] = address(0); 
-        //or delete arr[lenderIdx];
-        
-    }   //have this as separate function in case in the future we want borrower to choose lender? based on ex. if they've been active *recently*
-        //could add option to choose in transaction function 
-
     
     function transaction(uint ISPN) public{
-        address lender = selectLender(ISPN);
-        removeLender(lender);
-        modifyBalances(lender, msg.sender);
+        address lender = books[ISPN];
+        modifyBalances(lender, msg.sender, 10);
         modifyReputation(lender);
         
         emit onlineTransactionCompleted(lender, msg.sender, ISPN);
-        
-        /*while(!inPersonTransactionCompleted){}        
-        
-        emit inPersonTransactionCompleted(lender, borrower, ISPN);*/
-        
-        //TODO- add functionality for borrower to rate: lender followthrough true/false, on time true/false, book quality
     }
-    
-    
-   //hardcode certain num of textbooks in high demand 5-10
-   //keep global record how many of each are available, who they're from
-   //mapping or some way to id each textbooks
-   //list of all the addresses that have offered to lend list
-   //erc20 can represent someone's reputation
-   //rep goes up if transaction successful, book on time, quality
-   //event trustowrthy
-   //probability
-   //calc rep. start by how much $ you put in. every $10 1 rep
-   //input collateral event
-   //send msg to sender asking if they've gotten, bool, then 
 }
