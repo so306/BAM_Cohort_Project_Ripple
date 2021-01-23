@@ -17,9 +17,14 @@ contract BookChain{
     }
     
     
-    function setBalance(address lender, address borrower) private{
+    function setBalance(address lender, address borrower) public{
         currency[lender] = 100;
         currency[borrower] = 100;
+    }
+    
+    
+    function getBalance(address user) public view returns(uint){
+        return currency[user];
     }
     
     
@@ -28,6 +33,7 @@ contract BookChain{
         currency[lender] += amount;
     }
     
+    
     function modifyReputation(address lender) private{  
         reputation[lender] += 10;
     }
@@ -35,6 +41,7 @@ contract BookChain{
     
     function transaction(uint ISPN) public{
         address lender = books[ISPN];
+        delete books[ISPN]; 
         modifyBalances(lender, msg.sender, 10);
         modifyReputation(lender);
         
