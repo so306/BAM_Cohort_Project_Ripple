@@ -45,6 +45,6 @@ contract BookChain{
         modifyBalances(lender, msg.sender, 10);
         modifyReputation(lender);
         
-        emit onlineTransactionCompleted(lender, msg.sender, ISPN);
+        emit onlineTransactionCompleted(lender, msg.sender, ISBN);
     }
 }
