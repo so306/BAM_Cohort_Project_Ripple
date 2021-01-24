@@ -7,13 +7,13 @@ contract BookChain{
     mapping (address => uint) reputation;
     mapping (address => uint) currency;
     
-    event bookRegistered(address lender, uint ISPN);
-    event onlineTransactionCompleted(address lender, address borrower, uint ISPN);
+    event bookRegistered(address lender, uint ISBN);
+    event onlineTransactionCompleted(address lender, address borrower, uint ISBN);
     
     
-    function registerBook(address lender, uint ISPN) public {
-        books[ISPN] = lender;
-        emit bookRegistered(lender, ISPN);
+    function registerBook(address lender, uint ISBN) public {
+        books[ISBN] = lender;
+        emit bookRegistered(lender, ISBN);
     }
     
     
@@ -39,9 +39,9 @@ contract BookChain{
     }
     
     
-    function transaction(uint ISPN) public{
-        address lender = books[ISPN];
-        delete books[ISPN]; 
+    function transaction(uint ISBN) public{
+        address lender = books[ISBN];
+        delete books[ISBN]; 
         modifyBalances(lender, msg.sender, 10);
         modifyReputation(lender);
         
