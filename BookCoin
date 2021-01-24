@@ -29,7 +29,7 @@ contract BookChain{
     
     
     function modifyBalances(address lender, address borrower, uint amount) private{
-        currency[borrower] += amount;
+        currency[borrower] -= amount;
         currency[lender] += amount;
     }
     
